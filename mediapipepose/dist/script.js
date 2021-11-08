@@ -55,18 +55,18 @@ const spinner = document.querySelector('.loading');
 spinner.ontransitionend = () => {
     spinner.style.display = 'none';
 };
-// const landmarkContainer = document.getElementsByClassName('landmark-grid-container')[0];
-// const grid = new LandmarkGrid(landmarkContainer, {
-//     connectionColor: 0xCCCCCC,
-//     definedColors: [{ name: 'LEFT', value: 0xffa500 }, { name: 'RIGHT', value: 0x00ffff }],
-//     range: 2,
-//     fitToGrid: true,
-//     labelSuffix: 'm',
-//     landmarkSize: 2,
-//     numCellsPerAxis: 4,
-//     showHidden: false,
-//     centered: true,
-// });
+const landmarkContainer = document.getElementsByClassName('landmark-grid-container')[0];
+const grid = new LandmarkGrid(landmarkContainer, {
+    connectionColor: 0xCCCCCC,
+    definedColors: [{ name: 'LEFT', value: 0xffa500 }, { name: 'RIGHT', value: 0x00ffff }],
+    range: 2,
+    fitToGrid: true,
+    labelSuffix: 'm',
+    landmarkSize: 2,
+    numCellsPerAxis: 4,
+    showHidden: false,
+    centered: true,
+});
 let activeEffect = 'mask';
 
 function onResults(results) {
@@ -111,15 +111,15 @@ function onResults(results) {
             .map(index => results.poseLandmarks[index]), { visibilityMin: 0.65, color: 'white', fillColor: 'white' });
     }
     canvasCtx.restore();
-    // if (results.poseWorldLandmarks) {
-    //     grid.updateLandmarks(results.poseWorldLandmarks, mpPose.POSE_CONNECTIONS, [
-    //         { list: Object.values(mpPose.POSE_LANDMARKS_LEFT), color: 'LEFT' },
-    //         { list: Object.values(mpPose.POSE_LANDMARKS_RIGHT), color: 'RIGHT' },
-    //     ]);
-    // }
-    // else {
-    //     grid.updateLandmarks([]);
-    // }
+    if (results.poseWorldLandmarks) {
+        grid.updateLandmarks(results.poseWorldLandmarks, mpPose.POSE_CONNECTIONS, [
+            { list: Object.values(mpPose.POSE_LANDMARKS_LEFT), color: 'LEFT' },
+            { list: Object.values(mpPose.POSE_LANDMARKS_RIGHT), color: 'RIGHT' },
+        ]);
+    }
+    else {
+        grid.updateLandmarks([]);
+    }
 }
 const pose = new mpPose.Pose(options);
 pose.onResults(onResults);
