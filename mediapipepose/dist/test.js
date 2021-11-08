@@ -19,7 +19,6 @@ import {
 import { GUI } from '../../examples/jsm/libs/dat.gui.module.js';
 import { OrbitControls } from '../../examples/jsm/controls/OrbitControls.js';
 import { FBXLoader } from '/examples/jsm/loaders/FBXLoader.js'
-import { MMDLoader } from '/examples/jsm/loaders/MMDLoader.js';
 
 let gui, scene, camera, renderer, orbit, lights, mesh, bones, skeletonHelper, fbxModel;
 
@@ -67,10 +66,6 @@ function initScene() {
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
 	}, false);
-
-	// initBones();
-	// setupDatGui();
-
 }
 
 function setupDatGui(object) {
@@ -144,46 +139,45 @@ function render() {
 
 function myBones() {
 	const loader = new FBXLoader();
-	loader.load('models/ybot.fbx', function (mesh) {
+	loader.load('/models/SambaDancing.fbx', function (object) {
 
 		// mixer = new THREE.AnimationMixer( object );
 
 		// const action = mixer.clipAction( object.animations[ 0 ] );
 		// action.play();
 
-		mesh = mmd.mesh;
-		mesh.position.y = - 10;
-		scene.add( mesh );
-		
-		object.scale.set(1,1,1)
-		scene.add(mesh);
-		
+		object.traverse(function (child) {
 
-		const helper = new SkeletonHelper(mesh);
+			if (child.isMesh) {
+
+				child.castShadow = true;
+				child.receiveShadow = true;
+
+			}
+
+		});
+		object.scale.set(.1, .1, .1)
+		scene.add(object);
+
+
+		const helper = new SkeletonHelper(object);
 		scene.add(helper);
 
-		setupDatGui(mesh);
+		setupDatGui(object);
 	});
 }
 
 
-function getBoneList( object ) {
-
+function getBoneList(object) {
 	const boneList = [];
-
-	if ( object && object.isBone) {
-
-		boneList.push( object );
-
+	if (object && object.isBone) {
+		boneList.push(object);
 	}
 
 	for (let i = 0; i < object.children.length; i++) {
-
-
 		boneList.push.apply(boneList, getBoneList(object.children[i]));
-
 	}
-	
+
 	return boneList;
 
 }
