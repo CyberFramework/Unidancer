@@ -101,7 +101,8 @@ function onResults(results) {
     }
 
     if (results.poseLandmarks) {
-        updateModel(results.poseLandmarks);
+        
+        console.log(results.poseLandmarks[11]);
         drawingUtils.drawConnectors(canvasCtx, results.poseLandmarks, mpPose.POSE_CONNECTIONS, { visibilityMin: 0.65, color: 'white' });
         drawingUtils.drawLandmarks(canvasCtx, Object.values(mpPose.POSE_LANDMARKS_LEFT)
             .map(index => results.poseLandmarks[index]), { visibilityMin: 0.65, color: 'white', fillColor: 'rgb(255,138,0)' });
@@ -112,6 +113,7 @@ function onResults(results) {
     }
     canvasCtx.restore();
     if (results.poseWorldLandmarks) {
+        updateModel(results.poseWorldLandmarks);
         grid.updateLandmarks(results.poseWorldLandmarks, mpPose.POSE_CONNECTIONS, [
             { list: Object.values(mpPose.POSE_LANDMARKS_LEFT), color: 'LEFT' },
             { list: Object.values(mpPose.POSE_LANDMARKS_RIGHT), color: 'RIGHT' },
@@ -340,6 +342,8 @@ function myBones() {
 
         setupDatGui(object);
     });
+
+   
 }
 
 function getBoneList(object) {
@@ -357,66 +361,107 @@ function getBoneList(object) {
 }
 
 function updateModel(poseList) {
-    var rz, ry;
-    // hips
+   
+
+    var vec1, vec2;
 
     // left sholder
-    rz = sign(poseList[11].y - poseList[13].y) *
-        getAngle(poseList[11].x - poseList[12].x, poseList[11].y - poseList[12].y,
-            poseList[13].x - poseList[11].x, poseList[13].y - poseList[11].y);
-    ry = -1 * sign(poseList[11].z - poseList[13].z) *
-        getAngle(poseList[11].x - poseList[12].x, poseList[11].z - poseList[12].z,
-            poseList[13].x - poseList[11].x, poseList[13].z - poseList[11].z);
-
-    bones[17].rotation.z = cliper(rz, -1.2, 1.3);
-    bones[17].rotation.y = cliper(ry, -1.3, 1.3);
+    vec1 = getVector(poseList[11], poseList[12]);
+    vec2 = getVector(poseList[13], poseList[11]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
 
     // left arm
-    rz = sign(poseList[13].y - poseList[15].y) *
-        getAngle(poseList[13].x - poseList[11].x, poseList[13].y - poseList[11].y,
-            poseList[15].x - poseList[13].x, poseList[15].y - poseList[13].y);
-    ry = -1 * sign(poseList[13].z - poseList[15].z) *
-        getAngle(poseList[13].x - poseList[11].x, poseList[13].z - poseList[11].z,
-            poseList[15].x - poseList[13].x, poseList[15].z - poseList[13].z);
+    vec1 = getVector(poseList[13], poseList[11]);
+    vec2 = getVector(poseList[15], poseList[13]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 19);
 
-    bones[19].rotation.z = cliper(rz, -2, 2);
-    bones[19].rotation.y = cliper(ry, -2, 2);
+    //  right sholder
+    vec1 = getVector(poseList[12], poseList[11]);
+    vec2 = getVector(poseList[14], poseList[12]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [-1, 0, 0], vec2, bones, 60);
 
-    // right sholder
-    rz = -1 * sign(poseList[12].y - poseList[14].y) *
-        getAngle(poseList[12].x - poseList[11].x, poseList[12].y - poseList[12].y,
-            poseList[14].x - poseList[12].x, poseList[14].y - poseList[12].y);
-    ry = sign(poseList[12].z - poseList[14].z) *
-        getAngle(poseList[12].x - poseList[11].x, poseList[12].z - poseList[12].z,
-            poseList[14].x - poseList[12].x, poseList[14].z - poseList[12].z);
+    // // right arm
+    vec1 = getVector(poseList[14], poseList[12]);
+    vec2 = getVector(poseList[16], poseList[14]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [-1, 0, 0], vec2, bones, 62);
 
-    bones[60].rotation.z = cliper(rz, -1.2, 1.3);
-    bones[60].rotation.y = cliper(ry, -1.3, 1.3);
+   
 
-    // right arm
-    rz =  -1 * sign(poseList[14].y - poseList[16].y) *
-        getAngle(poseList[14].x - poseList[12].x, poseList[14].y - poseList[12].y,
-            poseList[16].x - poseList[14].x, poseList[16].y - poseList[14].y);
-    ry = sign(poseList[14].z - poseList[16].z) *
-        getAngle(poseList[14].x - poseList[12].x, poseList[14].z - poseList[12].z,
-            poseList[16].x - poseList[14].x, poseList[16].z - poseList[14].z);
+}
 
-    bones[62].rotation.z = cliper(rz, -2, 2);
-    bones[62].rotation.y = cliper(ry, -2, 2);       
+function updateModelTest(){
+    var vec1, vec2;
 
+    vec1 = new Vector3(1, 0, 0);
+    vec2 = new Vector3(1, 0, 1);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
 
+    vec2 = new Vector3(1, 1, 0);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
 
-
-
+    vec2 = new Vector3(1, 1, 1);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
 
 
 }
 
+function getVector(p1, p2){
+    return new Vector3(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z)
+}
+
 function getAngle(x1, y1, x2, y2) {
-    var innerProdcut = x1 * x2 + y1 * y2;
+    var bunza = x1 * y2 - y1 * x2;
+    if(bunza == 0) return 0;
     var v1Norm = Math.pow(x1 * x1 + y1 * y1, 0.5);
     var v2Norm = Math.pow(x2 * x2 + y2 * y2, 0.5);
-    return Math.acos(innerProdcut / (v1Norm * v2Norm));
+    return Math.asin(bunza / (v1Norm * v2Norm));
+}
+
+function getAngleXYZ(v1, v2){
+    var rx = getAngle(v1.y, v1.z, v2.y, v2.z);
+    var ry = getAngle(v1.x, v1.z, v2.x, v2.z);
+    var rz = getAngle(v1.x, v1.y, v2.x, v2.y);
+
+    return [rx, ry, rz];
+}
+
+function rotateJoint(v1, tov1, v2, bones, idx){
+    // 내가 여기서 v2만 변환해주면 되는 거잔아
+    // 
+    var xVec = new Vector3(...tov1);
+    var ro = getAngleXYZ(v1, xVec);
+    var vec2 = rotateVector(v2, ro[0], ro[1], ro[2]);
+
+    var rotation = getAngleXYZ(xVec, vec2);
+
+    bones[idx].rotation.x = rotation[0];
+    bones[idx].rotation.y = rotation[1];
+    bones[idx].rotation.z = rotation[2];
+}
+
+function rotateVector(vec, rx, ry, rz){
+    var temp1 = rotateXY(vec.x, vec.y, rz);
+    var temp2 = rotateXY(temp1[0],vec.z,ry);
+    var temp3 = rotateXY(temp1[1],temp2[1],rx);
+
+    return new Vector3(temp2[0], temp3[0], temp3[1]);
+}
+
+function rotateXY(x, y, r){
+    var cosR = Math.cos(r);
+    var sinR = Math.sin(r);
+    
+    var nx = x*cosR-y*sinR;
+    var ny = x*sinR+y*cosR;
+    return [nx, ny];
 }
 
 function sign(num) {
@@ -434,6 +479,7 @@ function cliper(num, min, max) {
 initScene();
 myBones();
 render();
+
 
 
 

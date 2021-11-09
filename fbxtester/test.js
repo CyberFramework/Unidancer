@@ -300,6 +300,10 @@ function getBoneList( object ) {
 
 }
 
+
+
+
+
 initScene();
 myBones();
 render();
