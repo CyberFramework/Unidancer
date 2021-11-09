@@ -101,7 +101,7 @@ function onResults(results) {
     }
 
     if (results.poseLandmarks) {
-        
+
         console.log(results.poseLandmarks[11]);
         drawingUtils.drawConnectors(canvasCtx, results.poseLandmarks, mpPose.POSE_CONNECTIONS, { visibilityMin: 0.65, color: 'white' });
         drawingUtils.drawLandmarks(canvasCtx, Object.values(mpPose.POSE_LANDMARKS_LEFT)
@@ -343,7 +343,7 @@ function myBones() {
         setupDatGui(object);
     });
 
-   
+
 }
 
 function getBoneList(object) {
@@ -361,71 +361,96 @@ function getBoneList(object) {
 }
 
 function updateModel(poseList) {
-   
+
 
     var vec1, vec2;
 
+    // ==========================================================
+    // Arms
+    // ==========================================================
     // left sholder
-    vec1 = getVector(poseList[11], poseList[12]);
-    vec2 = getVector(poseList[13], poseList[11]);
+    vec1 = getSubVector(poseList[11], poseList[12]);
+    vec2 = getSubVector(poseList[13], poseList[11]);
     vec1.y *= -1;
     vec2.y *= -1;
     rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
 
     // left arm
-    vec1 = getVector(poseList[13], poseList[11]);
-    vec2 = getVector(poseList[15], poseList[13]);
+    vec1 = getSubVector(poseList[13], poseList[11]);
+    vec2 = getSubVector(poseList[15], poseList[13]);
     vec1.y *= -1;
     vec2.y *= -1;
     rotateJoint(vec1, [1, 0, 0], vec2, bones, 19);
 
-    //  right sholder
-    vec1 = getVector(poseList[12], poseList[11]);
-    vec2 = getVector(poseList[14], poseList[12]);
+    // // left hand
+    // vec1 = getVector(poseList[15], poseList[13]);
+    // vec2 = getVector(poseList[19], poseList[15]);
+    // vec1.y *= -1;
+    // vec2.y *= -1;
+    // rotateJoint(vec1, [1, 0, 0], vec2, bones, 21);
+
+    // right sholder
+    vec1 = getSubVector(poseList[12], poseList[11]);
+    vec2 = getSubVector(poseList[14], poseList[12]);
     vec1.y *= -1;
     vec2.y *= -1;
     rotateJoint(vec1, [-1, 0, 0], vec2, bones, 60);
 
     // // right arm
-    vec1 = getVector(poseList[14], poseList[12]);
-    vec2 = getVector(poseList[16], poseList[14]);
+    vec1 = getSubVector(poseList[14], poseList[12]);
+    vec2 = getSubVector(poseList[16], poseList[14]);
     vec1.y *= -1;
     vec2.y *= -1;
     rotateJoint(vec1, [-1, 0, 0], vec2, bones, 62);
 
-   
+    // // // right hand
+    // vec1 = getVector(poseList[16], poseList[14]);
+    // vec2 = getVector(poseList[20], poseList[16]);
+    // vec1.y *= -1;
+    // vec2.y *= -1;
+    // rotateJoint(vec1, [-1, 0, 0], vec2, bones, 64);
+
+    // ==========================================================
+    // 허리 - 목
+    // ==========================================================
+    // Hips
+    vec1 = new Vector3(1,0,0);
+    vec2 = getSubVector(poseList[23], poseList[24]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 0);
+
+    // 허리-어깨
+    vec1 = getSubVector(poseList[11], poseList[12]);
+    vec2 = getSubVector(poseList[23], poseList[24]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 4);
+
+    // neck
+    var temp0 = new Vector3(0.5*(poseList[11].x + poseList[12].x), 0.5*(poseList[11].y + poseList[12].y), 0.5*(poseList[11].z + poseList[12].z));
+    var temp1 = new Vector3(0.5*(poseList[9].x + poseList[10].x), 0.5*(poseList[9].y + poseList[10].y), 0.5*(poseList[9].z + poseList[10].z));
+    vec1 = getSubVector(temp1,temp0);
+    vec2 = getSubVector(poseList[0], temp1);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [0, 1, 0], vec2, bones, 8);
 
 }
 
-function updateModelTest(){
-    var vec1, vec2;
-
-    vec1 = new Vector3(1, 0, 0);
-    vec2 = new Vector3(1, 0, 1);
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
-
-    vec2 = new Vector3(1, 1, 0);
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
-
-    vec2 = new Vector3(1, 1, 1);
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
-
-
-}
-
-function getVector(p1, p2){
+function getSubVector(p1, p2) {
     return new Vector3(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z)
 }
 
 function getAngle(x1, y1, x2, y2) {
     var bunza = x1 * y2 - y1 * x2;
-    if(bunza == 0) return 0;
+    if (bunza == 0) return 0;
     var v1Norm = Math.pow(x1 * x1 + y1 * y1, 0.5);
     var v2Norm = Math.pow(x2 * x2 + y2 * y2, 0.5);
     return Math.asin(bunza / (v1Norm * v2Norm));
 }
 
-function getAngleXYZ(v1, v2){
+function getAngleXYZ(v1, v2) {
     var rx = getAngle(v1.y, v1.z, v2.y, v2.z);
     var ry = getAngle(v1.x, v1.z, v2.x, v2.z);
     var rz = getAngle(v1.x, v1.y, v2.x, v2.y);
@@ -433,7 +458,7 @@ function getAngleXYZ(v1, v2){
     return [rx, ry, rz];
 }
 
-function rotateJoint(v1, tov1, v2, bones, idx){
+function rotateJoint(v1, tov1, v2, bones, idx) {
     // 내가 여기서 v2만 변환해주면 되는 거잔아
     // 
     var xVec = new Vector3(...tov1);
@@ -447,35 +472,24 @@ function rotateJoint(v1, tov1, v2, bones, idx){
     bones[idx].rotation.z = rotation[2];
 }
 
-function rotateVector(vec, rx, ry, rz){
+function rotateVector(vec, rx, ry, rz) {
     var temp1 = rotateXY(vec.x, vec.y, rz);
-    var temp2 = rotateXY(temp1[0],vec.z,ry);
-    var temp3 = rotateXY(temp1[1],temp2[1],rx);
+    var temp2 = rotateXY(temp1[0], vec.z, ry);
+    var temp3 = rotateXY(temp1[1], temp2[1], rx);
 
     return new Vector3(temp2[0], temp3[0], temp3[1]);
 }
 
-function rotateXY(x, y, r){
+function rotateXY(x, y, r) {
     var cosR = Math.cos(r);
     var sinR = Math.sin(r);
-    
-    var nx = x*cosR-y*sinR;
-    var ny = x*sinR+y*cosR;
+
+    var nx = x * cosR - y * sinR;
+    var ny = x * sinR + y * cosR;
     return [nx, ny];
 }
 
-function sign(num) {
-    if (num >= 0) {
-        return 1;
-    }
-    return -1;
-}
 
-function cliper(num, min, max) {
-    if (num > max) return max;
-    if (num < min) return min
-    return num;
-}
 initScene();
 myBones();
 render();
