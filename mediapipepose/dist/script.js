@@ -314,7 +314,7 @@ function render() {
 
 }
 
-function myBones() {
+function loadModel() {
     const loader = new FBXLoader();
     loader.load('/models/SambaDancing.fbx', function (object) {
 
@@ -411,14 +411,14 @@ function updateModel(poseList) {
     // rotateJoint(vec1, [-1, 0, 0], vec2, bones, 64);
 
     // ==========================================================
-    // 허리 - 목
+    // Hip to Neck
     // ==========================================================
     // Hips
     vec1 = new Vector3(1,0,0);
     vec2 = getSubVector(poseList[23], poseList[24]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 0);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 2);
 
     // 허리-어깨
     vec1 = getSubVector(poseList[11], poseList[12]);
@@ -428,13 +428,57 @@ function updateModel(poseList) {
     rotateJoint(vec1, [1, 0, 0], vec2, bones, 4);
 
     // neck
-    var temp0 = new Vector3(0.5*(poseList[11].x + poseList[12].x), 0.5*(poseList[11].y + poseList[12].y), 0.5*(poseList[11].z + poseList[12].z));
-    var temp1 = new Vector3(0.5*(poseList[9].x + poseList[10].x), 0.5*(poseList[9].y + poseList[10].y), 0.5*(poseList[9].z + poseList[10].z));
-    vec1 = getSubVector(temp1,temp0);
-    vec2 = getSubVector(poseList[0], temp1);
+    var midShoulder = new Vector3(0.5*(poseList[11].x + poseList[12].x), 0.5*(poseList[11].y + poseList[12].y), 0.5*(poseList[11].z + poseList[12].z));
+    var midHip = new Vector3(0.5*(poseList[23].x + poseList[24].x), 0.5*(poseList[23].y + poseList[24].y), 0.5*(poseList[23].z + poseList[24].z));
+    var midMouse = new Vector3(0.5*(poseList[9].x + poseList[10].x), 0.5*(poseList[9].y + poseList[10].y), 0.5*(poseList[9].z + poseList[10].z));
+    var temp = getSubVector(midShoulder, midHip)
+    vec1 = getSubVector(midMouse, temp);
+    vec2 = getSubVector(poseList[0], midMouse);
     vec1.y *= -1;
     vec2.y *= -1;
     rotateJoint(vec1, [0, 1, 0], vec2, bones, 8);
+
+
+    // ==========================================================
+    // Left Leg
+    // ==========================================================
+    // 허벅지
+    vec1 = getSubVector(midHip, midShoulder);
+    // vec1 = getSubVector(poseList[23], poseList[11]);
+    vec2 = getSubVector(poseList[25], poseList[23]);
+    vec1.z *= -1;
+    vec2.z *= -1;
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, 110);
+
+    // 종아리
+    vec1 = getSubVector(poseList[25], poseList[23]);
+    vec2 = getSubVector(poseList[27], poseList[25]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    vec1.z *= -1;
+    vec2.z *= -1;
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, 112);
+
+
+
+    // ==========================================================
+    // Right Leg
+    // ==========================================================
+    // 허벅지
+    vec1 = getSubVector(midHip, midShoulder);
+    vec2 = getSubVector(poseList[26], poseList[24]);
+    vec1.z *= -1;
+    vec2.z *= -1;
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, 101);
+
+    // // 종아리
+    vec1 = getSubVector(poseList[26], poseList[24]);
+    vec2 = getSubVector(poseList[28], poseList[26]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    vec1.z *= -1;
+    vec2.z *= -1;
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, 103);
 
 }
 
@@ -491,7 +535,7 @@ function rotateXY(x, y, r) {
 
 
 initScene();
-myBones();
+loadModel();
 render();
 
 
