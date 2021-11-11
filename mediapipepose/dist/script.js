@@ -198,6 +198,8 @@ import { OrbitControls } from '../../examples/jsm/controls/OrbitControls.js';
 import { FBXLoader } from '/examples/jsm/loaders/FBXLoader.js'
 
 let gui, scene, camera, renderer, orbit, lights, mesh, bones, skeletonHelper, fbxModel;
+var circle, particle, skelet;
+var currentBG = 0;
 
 const state = {
     animateBones: false
@@ -210,8 +212,9 @@ function initScene() {
     scene.background = new THREE.Color(0x444444);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
-    camera.position.z = 30;
-    camera.position.y = 30;
+    camera.position.x = 15;
+    camera.position.y = 10;
+    camera.position.z = 10;
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -220,19 +223,10 @@ function initScene() {
 
     orbit = new OrbitControls(camera, renderer.domElement);
     orbit.enableZoom = false;
+    orbit.target.set(0,5,0);
+    orbit.update();
 
     lights = [];
-    lights[0] = new THREE.PointLight(0xffffff, 1, 0);
-    lights[1] = new THREE.PointLight(0xffffff, 1, 0);
-    lights[2] = new THREE.PointLight(0xffffff, 1, 0);
-
-    lights[0].position.set(0, 200, 0);
-    lights[1].position.set(100, 200, 100);
-    lights[2].position.set(- 100, - 200, - 100);
-
-    scene.add(lights[0]);
-    scene.add(lights[1]);
-    scene.add(lights[2]);
 
     window.addEventListener('resize', function () {
 
@@ -243,7 +237,22 @@ function initScene() {
 
     }, false);
 
-    rendBG_sheep();
+
+    // 임시 background 교체
+    currentBG = 1;
+    switch (currentBG) {
+        case 0:
+            rendBG_sheep();
+            break;
+        case 1:
+            rendBG_planet2();
+            break;
+        default:
+    }
+
+    scene.add(lights[0]);
+    scene.add(lights[1]);
+    scene.add(lights[2]);
 }
 
 function setupDatGui(object) {
@@ -311,6 +320,18 @@ function render() {
 
     }
 
+    // planet2의 애니메이션, 최적화를 위해 이 배경일때만 작동하도록 수정바람
+    if (currentBG == 1) {
+        particle.rotation.x += 0.0000;
+        particle.rotation.y -= 0.0040;
+        circle.rotation.x -= 0.0020;
+        circle.rotation.y -= 0.0030;
+        skelet.rotation.x -= 0.0010;
+        skelet.rotation.y += 0.0020;
+    }
+
+
+    renderer.clear();
     renderer.render(scene, camera);
 
 }
@@ -334,7 +355,8 @@ function loadModel() {
             }
 
         });
-        object.scale.set(.1, .1, .1)
+        object.scale.set(.05, .05, .05)
+        object.rotation.y = 45;
         scene.add(object);
 
 
@@ -543,6 +565,16 @@ render();
 
 //------------------------------- Background Parts -----------------------------------
 function rendBG_sheep() {
+    scene.background = new THREE.Color(0xA5E3E6);
+
+    lights[0] = new THREE.PointLight(0xffffff, 1, 0);
+    lights[1] = new THREE.PointLight(0xffffff, 1, 0);
+    lights[2] = new THREE.PointLight(0xffffff, 1, 0);
+
+    lights[0].position.set(0, 200, 0);
+    lights[1].position.set(100, 200, 100);
+    lights[2].position.set(- 100, - 200, - 100);
+
     // for convenience
     var pi = Math.PI;
 
@@ -623,6 +655,7 @@ function rendBG_sheep() {
     base.scale.x = layers[0].scale.x;
     base.position.y = -5;
     ground.add(base);
+    ground.translateY(-0.5);
 
     scene.add(ground);
 
@@ -737,11 +770,11 @@ function rendBG_sheep() {
     }
     stone[0].rotation.set(0, 12, pi / 2);
     stone[0].scale.set(3, 1, 1);
-    stone[0].position.set(-1, 1, 4.6);
+    stone[0].position.set(-1, 0.5, 4.6);
 
     stone[1].rotation.set(0, 0, pi / 2);
     stone[1].scale.set(1, 1, 1);
-    stone[1].position.set(0, 0.7, 5.3);
+    stone[1].position.set(0, 0.2, 5.3);
 
     //-------------------------------------sheep-------------------------------------
     //sheep body
@@ -853,7 +886,7 @@ function rendBG_sheep() {
         );
     }
 
-    sheep.position.set(4.8, -0.3, -3);
+    sheep.position.set(4.8, -0.8, -3);
     sheep.scale.set(0.8, 0.8, 0.8);
     sheep.rotation.set(0, pi / 4, 0);
     scene.add(sheep);
@@ -883,9 +916,71 @@ function rendBG_sheep() {
     wood[2].rotation.x = -pi / 32;
     wood[2].rotation.y = pi / 32;
 
-    fence.position.set(1, 0, 3);
+    fence.position.set(1, -0.5, 3);
     fence.rotation.y = pi / 5;
     scene.add(fence);
 
 }
 
+function rendBG_planet2() {
+    scene.background = new THREE.Color(0x000000);
+    const loader = new THREE.TextureLoader();
+    loader.load('../src/manyworlds-hyperwall-small.jpg' , function(texture)
+                {
+                 scene.background = texture;  
+                });
+
+    // change light property
+    lights[0] = new THREE.DirectionalLight( 0xffffff, 1 );
+    lights[0].position.set( 1, 0, 0 );
+    lights[1] = new THREE.DirectionalLight( 0x11E8BB, 1 );
+    lights[1].position.set( 0.75, 1, 0.5 );
+    lights[2] = new THREE.DirectionalLight( 0x8200C9, 1 );
+    lights[2].position.set( -0.75, -1, 0.5 );
+
+    circle = new THREE.Object3D();
+    skelet = new THREE.Object3D();
+    particle = new THREE.Object3D();
+  
+    scene.add(circle);
+    scene.add(skelet);
+    scene.add(particle);
+  
+    var geometry = new THREE.TetrahedronGeometry(2, 0);
+    var geom = new THREE.SphereGeometry(7, 30, 30);
+    var geom2 = new THREE.IcosahedronGeometry(15, 1);
+  
+    var material = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+    });
+  
+    for (var i = 0; i < 1000; i++) {
+      var mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+      mesh.position.multiplyScalar(90 + (Math.random() * 700));
+      mesh.rotation.set(Math.random() * 2, Math.random() * 2, Math.random() * 2);
+      particle.add(mesh);
+    }
+  
+    var mat = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+    });
+  
+    var mat2 = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      wireframe: true,
+      side: THREE.DoubleSide
+  
+    });
+  
+    var planet = new THREE.Mesh(geom, mat);
+    planet.scale.x = planet.scale.y = planet.scale.z = 1.6;
+    circle.add(planet);
+    circle.translateY(-11);
+  
+    var planet2 = new THREE.Mesh(geom2, mat2);
+    planet2.scale.x = planet2.scale.y = planet2.scale.z = 2.3;
+    //skelet.add(planet2);
+
+
+}
