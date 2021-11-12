@@ -1,71 +1,81 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Unidancer</title>
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/landmark_grid.css" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/landmark_grid.css" crossorigin="anonymous">
   <meta charset="utf-8">
   <link rel="icon" href="favicon.ico">
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.css" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.css" crossorigin="anonymous">
 
   <link rel="stylesheet" type="text/css" href="demo.css" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/control_utils_3d.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/control_utils_3d.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3/drawing_utils.js"
+    crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.4/pose.js" crossorigin="anonymous"></script>
 
   <script type="module" src="./script.js"></script>
   <!-- <script type="module" src="./test.js"></script> -->
-<!-- <link rel="stylesheet" href="./style.css"> -->
+  <!-- <link rel="stylesheet" href="./style.css"> -->
 
 </head>
-<body>
-<!-- partial:index.partial.html -->
-<body>
-  <style>
-    .square-box {
-      width: 33%;
-      height: 0;
-      padding-top: 33%;
-      position: absolute;
-      right: 20px;
-      top: 20px;
-    }
 
-    .landmark-grid-container {
-      height: 100%;
-      width: 100%;
-      position: absolute;
-      top:0;
-      left:0;
-      background-color: #99999999;
-    }
-    .container{
-      height: 100%;
-      width: 30%;
-      position: absolute;
-    }
-  </style>
-  <div class="container" width="30%">
-    <video class="input_video" style="display:none"></video>
-    <canvas class="output_canvas"></canvas>
-    <!-- <canvas class="output_canvas" width="300px" height="200px"></canvas> -->
-    <div class="loading">
-      <div class="spinner"></div>
-      <!-- <div class="message">
+<body>
+  <!-- partial:index.partial.html -->
+
+  <body>
+    <style>
+      .square-box {
+        width: 100%;
+        height: 40%;
+        position: sticky;
+      }
+
+      .landmark-grid-container {
+        height: 100%;
+        width: 100%;
+        position: relative;
+        top: 0;
+        left: 0;
+        background-color: #99999999;
+      }
+
+      .container {
+        height: 100%;
+        width: 30%;
+        position: absolute;
+      }
+    </style>
+    <div class="container" width="30%">
+      <div class='square-box'>
+        <div class="landmark-grid-container">
+        </div>
+      </div>
+      <video class="input_video" style="display:none"></video>
+      <canvas class="output_canvas"></canvas>
+      <!-- <canvas class="output_canvas" width="300px" height="200px"></canvas> -->
+      <div class="loading">
+        <div class="spinner"></div>
+        <!-- <div class="message">
         Loading
       </div> -->
-    </div>
-  <div class="control-panel" width:20%>
-  </div>
-  <div class='square-box' style="display:none">
-    <div class="landmark-grid-container">
-    </div>
-  </div>
-  
-  <!-- partial -->
- 
+      </div>
+      
+      <div class="control-panel" width:20%>
+      </div>
 
-</body>
+
+      <!-- partial -->
+
+
+  </body>
+
 </html>
