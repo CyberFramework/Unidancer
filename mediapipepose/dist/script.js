@@ -232,8 +232,7 @@ function initScene() {
     renderer.setViewport(window.innerWidth*0.3, 0, window.innerWidth*0.7, window.innerHeight);
 
     orbit = new OrbitControls(camera, renderer.domElement);
-    orbit.enableZoom = false;
-    orbit.target.set(0,5,0);
+    orbit.enableZoom = true;
     orbit.update();
 
     lights = [];
@@ -330,23 +329,22 @@ function render() {
 
     }
 
-    // planet2의 애니메이션, 최적화를 위해 이 배경일때만 작동하도록 수정바람
+    // 애니메이션
     if (currentBG == 1) {
         particle.rotation.x += 0.0000;
         particle.rotation.y -= 0.0040;
-        circle.rotation.x -= 0.0020;
-        circle.rotation.y -= 0.0030;
-        skelet.rotation.x -= 0.0010;
-        skelet.rotation.y += 0.0020;
+        // circle.rotation.x -= 0.0020;
+        // circle.rotation.y -= 0.0030;
+        // skelet.rotation.x -= 0.0010;
+        // skelet.rotation.y += 0.0020;
     }
     else if (currentBG == 2) {
-        moon.rotation.y += 0.002;
-        moon.rotation.x += 0.0001;
+        // moon.rotation.y += 0.002;
+        // moon.rotation.x += 0.0001;
         world.rotation.y += 0.0001
         world.rotation.x += 0.0005
 
     }
-
 
     renderer.clear();
     renderer.render(scene, camera);
@@ -1068,8 +1066,6 @@ function rendBG_moon() {
     var textureURL = "../src/lroc_color_poles_1k.jpg"; 
     var displacementURL = "../src/ldem_3_8bit.jpg"; 
     var worldURL = "../src/hipp8_s.jpg"
-
-    orbit.enablePan = false;
 
 
     var geometry = new THREE.SphereGeometry( 20,60,60 );
