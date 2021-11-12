@@ -102,7 +102,7 @@ function onResults(results) {
 
     if (results.poseLandmarks) {
 
-        console.log(results.poseLandmarks[11]);
+        // console.log(results.poseLandmarks[11]);
         drawingUtils.drawConnectors(canvasCtx, results.poseLandmarks, mpPose.POSE_CONNECTIONS, { visibilityMin: 0.65, color: 'white' });
         drawingUtils.drawLandmarks(canvasCtx, Object.values(mpPose.POSE_LANDMARKS_LEFT)
             .map(index => results.poseLandmarks[index]), { visibilityMin: 0.65, color: 'white', fillColor: 'rgb(255,138,0)' });
@@ -370,7 +370,7 @@ function loadModel() {
         const helper = new THREE.SkeletonHelper(object);
         scene.add(helper);
 
-        // setupDatGui(object);
+        setupDatGui(object);
     });
 
 
@@ -413,11 +413,11 @@ function updateModel(poseList) {
     rotateJoint(vec1, [1, 0, 0], vec2, bones, 19);
 
     // // left hand
-    // vec1 = getVector(poseList[15], poseList[13]);
-    // vec2 = getVector(poseList[19], poseList[15]);
-    // vec1.y *= -1;
-    // vec2.y *= -1;
-    // rotateJoint(vec1, [1, 0, 0], vec2, bones, 21);
+    vec1 = getSubVector(poseList[15], poseList[13]);
+    vec2 = getSubVector(poseList[19], poseList[15]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 21);
 
     // right sholder
     vec1 = getSubVector(poseList[12], poseList[11]);
@@ -433,12 +433,12 @@ function updateModel(poseList) {
     vec2.y *= -1;
     rotateJoint(vec1, [-1, 0, 0], vec2, bones, 62);
 
-    // // // right hand
-    // vec1 = getVector(poseList[16], poseList[14]);
-    // vec2 = getVector(poseList[20], poseList[16]);
-    // vec1.y *= -1;
-    // vec2.y *= -1;
-    // rotateJoint(vec1, [-1, 0, 0], vec2, bones, 64);
+    // // right hand
+    vec1 = getSubVector(poseList[16], poseList[14]);
+    vec2 = getSubVector(poseList[20], poseList[16]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [-1, 0, 0], vec2, bones, 64);
 
     // ==========================================================
     // Hip to Neck
@@ -448,7 +448,8 @@ function updateModel(poseList) {
     vec2 = getSubVector(poseList[23], poseList[24]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 2);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, 0);
+
 
     // 허리-어깨
     vec1 = getSubVector(poseList[11], poseList[12]);
@@ -534,7 +535,7 @@ function getAngleXYZ(v1, v2) {
 
 function rotateJoint(v1, tov1, v2, bones, idx) {
     // 내가 여기서 v2만 변환해주면 되는 거잔아
-    // 
+    //
     var xVec = new THREE.Vector3(...tov1);
     var ro = getAngleXYZ(v1, xVec);
     var vec2 = rotateVector(v2, ro[0], ro[1], ro[2]);
@@ -545,6 +546,7 @@ function rotateJoint(v1, tov1, v2, bones, idx) {
     bones[idx].rotation.y = rotation[1];
     bones[idx].rotation.z = rotation[2];
 }
+
 
 function rotateVector(vec, rx, ry, rz) {
     var temp1 = rotateXY(vec.x, vec.y, rz);

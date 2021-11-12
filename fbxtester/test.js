@@ -180,9 +180,9 @@ function setupDatGui(object) {
 		folder.add(bone.position, 'y', - 10 + bone.position.y, 10 + bone.position.y);
 		folder.add(bone.position, 'z', - 10 + bone.position.z, 10 + bone.position.z);
 
-		folder.add(bone.rotation, 'x', - Math.PI * 0.5, Math.PI * 0.5);
-		folder.add(bone.rotation, 'y', - Math.PI * 0.5, Math.PI * 0.5);
-		folder.add(bone.rotation, 'z', - Math.PI * 0.5, Math.PI * 0.5);
+		folder.add(bone.rotation, 'x', - Math.PI * 1, Math.PI * 1);
+		folder.add(bone.rotation, 'y', - Math.PI * 1, Math.PI * 1);
+		folder.add(bone.rotation, 'z', - Math.PI * 1, Math.PI * 1);
 
 		folder.add(bone.scale, 'x', 0, 2);
 		folder.add(bone.scale, 'y', 0, 2);
