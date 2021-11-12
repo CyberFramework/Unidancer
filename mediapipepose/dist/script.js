@@ -150,16 +150,20 @@ new controls.ControlPanel(controlsElement, {
         onFrame: async (input, size) => {
             const aspect = size.height / size.width;
             let width, height;
-            if (window.innerWidth > window.innerHeight) {
-                height = window.innerHeight;
-                width = height / aspect;
-            }
-            else {
-                width = window.innerWidth;
-                height = width * aspect;
-            }
-            canvasElement.width = width / 3;
-            canvasElement.height = height / 3;
+        
+            // if (window.innerWidth > window.innerHeight) {
+            //     height = window.innerHeight;
+            //     width = height / aspect;
+            // }
+            // else {
+            //     width = window.innerWidth;
+            //     height = width * aspect;
+            // }
+            width = window.innerWidth*0.3;
+            height = width * aspect;
+
+            canvasElement.width = width;
+            canvasElement.height = height;
             await pose.send({ image: input });
         },
     }),
@@ -209,17 +213,20 @@ function initScene() {
     gui = new GUI();
 
     scene = new THREE.Scene();
+    
     scene.background = new THREE.Color(0x444444);
 
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth*0.7/ window.innerHeight, 0.1, 200);
     camera.position.x = 15;
     camera.position.y = 10;
     camera.position.z = 10;
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight, true );
     document.body.appendChild(renderer.domElement);
+    renderer.setScissor(window.innerWidth*0.3, 0, window.innerWidth*0.7, window.innerHeight);
+    renderer.setViewport(window.innerWidth*0.3, 0, window.innerWidth*0.7, window.innerHeight);
 
     orbit = new OrbitControls(camera, renderer.domElement);
     orbit.enableZoom = false;
@@ -228,14 +235,14 @@ function initScene() {
 
     lights = [];
 
-    window.addEventListener('resize', function () {
+    // window.addEventListener('resize', function () {
 
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+    //     camera.aspect = window.innerWidth / window.innerHeight;
+    //     camera.updateProjectionMatrix();
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
+    //     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    }, false);
+    // }, false);
 
 
     // 임시 background 교체
@@ -353,7 +360,7 @@ function loadModel() {
                 child.receiveShadow = true;
 
             }
-
+            bones = getBoneList(object);
         });
         object.scale.set(.05, .05, .05)
         object.rotation.y = 45;
@@ -363,7 +370,7 @@ function loadModel() {
         const helper = new THREE.SkeletonHelper(object);
         scene.add(helper);
 
-        setupDatGui(object);
+        // setupDatGui(object);
     });
 
 

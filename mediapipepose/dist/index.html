@@ -2,8 +2,8 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>CodePen - MediaPipe - Pose</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/landmark_grid.css" crossorigin="anonymous">
+  <title>Unidancer</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/landmark_grid.css" crossorigin="anonymous">
   <meta charset="utf-8">
   <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.css" crossorigin="anonymous">
@@ -41,20 +41,25 @@
       left:0;
       background-color: #99999999;
     }
+    .container{
+      height: 100%;
+      width: 30%;
+      position: absolute;
+    }
   </style>
-  <div class="container">
-    <video class="input_video"></video>
-    <canvas class="output_canvas" width="300px" height="200px"></canvas>
-    <canvas class="output_canvas" width="300px" height="200px"></canvas>
+  <div class="container" width="30%">
+    <video class="input_video" style="display:none"></video>
+    <canvas class="output_canvas"></canvas>
+    <!-- <canvas class="output_canvas" width="300px" height="200px"></canvas> -->
     <div class="loading">
       <div class="spinner"></div>
-      <div class="message">
+      <!-- <div class="message">
         Loading
-      </div>
+      </div> -->
     </div>
-  <div class="control-panel">
+  <div class="control-panel" width:20%>
   </div>
-  <div class='square-box'>
+  <div class='square-box' style="display:none">
     <div class="landmark-grid-container">
     </div>
   </div>
