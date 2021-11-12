@@ -204,6 +204,7 @@ import { FBXLoader } from '/examples/jsm/loaders/FBXLoader.js'
 let gui, scene, camera, renderer, orbit, lights, mesh, bones, skeletonHelper, fbxModel;
 var circle, particle, skelet;
 var currentBG = 0;
+var moon, world;
 
 const state = {
     animateBones: false
@@ -217,11 +218,13 @@ function initScene() {
     scene.background = new THREE.Color(0x444444);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth*0.7/ window.innerHeight, 0.1, 200);
-    camera.position.x = 15;
-    camera.position.y = 10;
-    camera.position.z = 10;
+    camera.position.x = 9;
+    camera.position.y = 4;
+    camera.position.z = 5;
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight, true );
     document.body.appendChild(renderer.domElement);
@@ -246,7 +249,7 @@ function initScene() {
 
 
     // 임시 background 교체
-    currentBG = 1;
+    currentBG = 2;
     switch (currentBG) {
         case 0:
             rendBG_sheep();
@@ -254,12 +257,12 @@ function initScene() {
         case 1:
             rendBG_planet2();
             break;
+        case 2:
+            rendBG_moon();
+            break;
         default:
     }
 
-    scene.add(lights[0]);
-    scene.add(lights[1]);
-    scene.add(lights[2]);
 }
 
 function setupDatGui(object) {
@@ -336,6 +339,13 @@ function render() {
         skelet.rotation.x -= 0.0010;
         skelet.rotation.y += 0.0020;
     }
+    else if (currentBG == 2) {
+        moon.rotation.y += 0.002;
+        moon.rotation.x += 0.0001;
+        world.rotation.y += 0.0001
+        world.rotation.x += 0.0005
+
+    }
 
 
     renderer.clear();
@@ -362,8 +372,9 @@ function loadModel() {
             }
             bones = getBoneList(object);
         });
-        object.scale.set(.05, .05, .05)
+        object.scale.set(.03, .03, .03)
         object.rotation.y = 45;
+        object.castShadow = true;
         scene.add(object);
 
 
@@ -576,13 +587,21 @@ render();
 function rendBG_sheep() {
     scene.background = new THREE.Color(0xA5E3E6);
 
-    lights[0] = new THREE.PointLight(0xffffff, 1, 0);
-    lights[1] = new THREE.PointLight(0xffffff, 1, 0);
-    lights[2] = new THREE.PointLight(0xffffff, 1, 0);
+    lights[0] = new THREE.DirectionalLight(0xffffff, 1, 0);
+    lights[1] = new THREE.DirectionalLight(0xffffff, 1, 0);
+    lights[2] = new THREE.DirectionalLight(0xffffff, 1, 0);
 
     lights[0].position.set(0, 200, 0);
     lights[1].position.set(100, 200, 100);
     lights[2].position.set(- 100, - 200, - 100);
+
+    //lights[0].castShadow = true;
+    lights[1].castShadow = true;
+    lights[2].castShadow = true;
+
+    scene.add(lights[0]);
+    scene.add(lights[1]);
+    scene.add(lights[2]);
 
     // for convenience
     var pi = Math.PI;
@@ -632,10 +651,10 @@ function rendBG_sheep() {
     // scene.add(axesHelper);
 
     //materials
-    var mat_orange = new THREE.MeshLambertMaterial({ color: 0xff8c75 });
+    var mat_orange = new THREE.MeshPhongMaterial({ color: 0xff8c75 });
     var mat_grey = new THREE.MeshLambertMaterial({ color: 0xf3f2f7 });
     var mat_yellow = new THREE.MeshLambertMaterial({ color: 0xfeb42b });
-    var mat_dark = new THREE.MeshLambertMaterial({ color: 0x5a6e6c });
+    var mat_dark = new THREE.MeshPhongMaterial({ color: 0x5a6e6c });
     var mat_brown = new THREE.MeshLambertMaterial({ color: 0xa3785f });
     var mat_stone = new THREE.MeshLambertMaterial({ color: 0x9eaeac });
     //-------------------------------------ground-------------------------------------
@@ -665,7 +684,7 @@ function rendBG_sheep() {
     base.position.y = -5;
     ground.add(base);
     ground.translateY(-0.5);
-
+    ground.receiveShadow = true;
     scene.add(ground);
 
     //-------------------------------------trees-------------------------------------
@@ -941,16 +960,25 @@ function rendBG_planet2() {
 
     // change light property
     lights[0] = new THREE.DirectionalLight( 0xffffff, 1 );
-    lights[0].position.set( 1, 0, 0 );
+    lights[0].position.set( 10, 0, 0 );
+    lights[0].castShadow = true;
     lights[1] = new THREE.DirectionalLight( 0x11E8BB, 1 );
-    lights[1].position.set( 0.75, 1, 0.5 );
+    lights[1].position.set( 7.5, 10, 5 );
+    lights[1].castShadow = true;
+
     lights[2] = new THREE.DirectionalLight( 0x8200C9, 1 );
-    lights[2].position.set( -0.75, -1, 0.5 );
+    lights[2].position.set( -7.5, -10, 5 );
+    lights[2].castShadow = true;
+
+
+    scene.add(lights[0]);
+    scene.add(lights[1]);
+    scene.add(lights[2]);
 
     circle = new THREE.Object3D();
     skelet = new THREE.Object3D();
     particle = new THREE.Object3D();
-  
+
     scene.add(circle);
     scene.add(skelet);
     scene.add(particle);
@@ -984,12 +1012,118 @@ function rendBG_planet2() {
   
     var planet = new THREE.Mesh(geom, mat);
     planet.scale.x = planet.scale.y = planet.scale.z = 1.6;
+    planet.receiveShadow = true;
     circle.add(planet);
+    
     circle.translateY(-11);
   
-    var planet2 = new THREE.Mesh(geom2, mat2);
-    planet2.scale.x = planet2.scale.y = planet2.scale.z = 2.3;
+    // var planet2 = new THREE.Mesh(geom2, mat2);
+    // planet2.scale.x = planet2.scale.y = planet2.scale.z = 2.3;
     //skelet.add(planet2);
 
 
+}
+
+
+// function rendBG_desert() {
+//     lights[0] = new THREE.HemisphereLight(0xFFFFFF, 0x444444, 1);
+
+//     const geo = new THREE.PlaneBufferGeometry(10000, 10000);
+//     const material = new THREE.ShaderMaterial({
+//         uniforms: {
+//             resolution: {
+//               value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+//             }
+//     });
+//     material.defaultAttributeValues.uv = [1.0, 1.0];
+  
+//     const mesh = new THREE.Mesh(geo, material);
+//     // const mesh = new THREE.Mesh(geo, new THREE.MeshNormalMaterial());
+//     mesh.position.set(-100, 0, 0);
+//     mesh.rotation.set(0, Math.PI / 2, 0);
+//     mesh.scale.set(1, 1, -1);
+    
+//     scene.add(mesh);
+
+//     const igeo = new THREE.IcosahedronGeometry(40, 3);
+//     // const normalMat = new THREE.MeshPhongMaterial({color: 0xFF00FF, shading: THREE.FlatShading});
+//     const normalMat = new THREE.MeshPhongMaterial({ color: 0xc1994a, shading: THREE.FlatShading });
+//     ground = new THREE.Mesh(igeo, normalMat);
+//     igeo.verticesNeedUpdate = true;
+//     console.log(igeo.attributes.position.array);
+//     igeo.attributes.position.array.forEach(vert => {
+//         let randomTranslate = Math.floor(Math.random() * 10) + 1;
+//         let plusMinus = Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+//         randomTranslate *= plusMinus;
+//         if (vert % 2 == 1)
+//             vert += randomTranslate;
+//     });
+//     igeo.verticesNeedUpdate = true;
+
+//     ground.position.set(0, -65, 0);
+//     ground.scale.set(1, 1, 8);
+
+//     scene.add(ground);
+// }
+
+function rendBG_moon() {
+    var textureURL = "../src/lroc_color_poles_1k.jpg"; 
+    var displacementURL = "../src/ldem_3_8bit.jpg"; 
+    var worldURL = "../src/hipp8_s.jpg"
+
+    orbit.enablePan = false;
+
+
+    var geometry = new THREE.SphereGeometry( 20,60,60 );
+
+    var textureLoader = new THREE.TextureLoader();
+    var texture = textureLoader.load( textureURL );
+    var displacementMap = textureLoader.load( displacementURL );
+    var worldTexture = textureLoader.load( worldURL );
+    
+    var material = new THREE.MeshPhongMaterial ( 
+      { color: 0xffffff ,
+      map: texture ,
+         displacementMap: displacementMap,
+      displacementScale: 0.06,
+      bumpMap: displacementMap,
+      bumpScale: 0.04,
+       reflectivity:0, 
+       shininess :0
+      } 
+    
+    );
+    
+    moon = new THREE.Mesh( geometry, material );
+    
+    
+    const light = new THREE.DirectionalLight(0xFFFFFF, 1);
+    light.position.set(100, 20, 50);
+    light.castShadow = true;
+    scene.add(light);
+    
+    
+    const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.1 );
+    hemiLight.color.setHSL( 0.6, 1, 0.6 );
+    hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+    hemiLight.position.set( 0, 0, 0 );
+    scene.add( hemiLight );
+    
+    
+    var worldGeometry = new THREE.SphereGeometry( 100,60,60 );
+    var worldMaterial = new THREE.MeshBasicMaterial ( 
+      { color: 0xffffff ,
+      map: worldTexture ,
+      side: THREE.BackSide
+      } 
+    );
+    world = new THREE.Mesh( worldGeometry, worldMaterial );
+    scene.add( world );
+    
+    moon.translateY(-20);
+    moon.receiveShadow = true;
+    scene.add( moon );
+    
+    moon.rotation.x = 3.1415*0.02;
+    moon.rotation.y = 3.1415*1.54;
 }
