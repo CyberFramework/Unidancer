@@ -250,7 +250,7 @@ function render() {
 
 function myBones() {
 	const loader = new FBXLoader();
-	loader.load('/models/girl.fbx', function (object) {
+	loader.load('/models/woman.fbx', function (object) {
 
 		// mixer = new THREE.AnimationMixer( object );
 

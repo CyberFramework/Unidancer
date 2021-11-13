@@ -150,7 +150,7 @@ new controls.ControlPanel(controlsElement, {
         onFrame: async (input, size) => {
             const aspect = size.height / size.width;
             let width, height;
-        
+
             // if (window.innerWidth > window.innerHeight) {
             //     height = window.innerHeight;
             //     width = height / aspect;
@@ -159,7 +159,7 @@ new controls.ControlPanel(controlsElement, {
             //     width = window.innerWidth;
             //     height = width * aspect;
             // }
-            width = window.innerWidth*0.3;
+            width = window.innerWidth * 0.3;
             height = width * aspect;
 
             canvasElement.width = width;
@@ -215,10 +215,10 @@ function initScene() {
     gui = new GUI();
 
     scene = new THREE.Scene();
-    
+
     scene.background = new THREE.Color(0x444444);
 
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth*0.7/ window.innerHeight, 0.1, 200);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth * 0.7 / window.innerHeight, 0.1, 200);
     camera.position.x = 9;
     camera.position.y = 4;
     camera.position.z = 5;
@@ -227,10 +227,10 @@ function initScene() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight, true );
+    renderer.setSize(window.innerWidth, window.innerHeight, true);
     document.body.appendChild(renderer.domElement);
-    renderer.setScissor(window.innerWidth*0.3, 0, window.innerWidth*0.7, window.innerHeight);
-    renderer.setViewport(window.innerWidth*0.3, 0, window.innerWidth*0.7, window.innerHeight);
+    renderer.setScissor(window.innerWidth * 0.3, 0, window.innerWidth * 0.7, window.innerHeight);
+    renderer.setViewport(window.innerWidth * 0.3, 0, window.innerWidth * 0.7, window.innerHeight);
 
     orbit = new OrbitControls(camera, renderer.domElement);
     orbit.enableZoom = true;
@@ -346,7 +346,7 @@ function render() {
 
     }
 
-    
+
     renderer.clear();
     renderer.render(scene, camera);
 
@@ -375,7 +375,7 @@ function loadModel() {
         object.rotation.y = 45;
         object.castShadow = true;
         scene.add(object);
-        
+
 
 
         // const helper = new THREE.SkeletonHelper(object);
@@ -402,16 +402,6 @@ function getBoneList(object) {
 }
 
 function updateModel(poseList) {
-    if(modelAddress == '/models/SambaDancing.fbx'){
-        updateModel_ybot(poseList)
-    }
-    else if (modelAddress == '/models/girl.fbx'){
-        updateModel_girl(poseList)
-    }
-}
-
-
-function updateModel_ybot(poseList){
     var i = 0;
 
     var vec1, vec2;
@@ -465,7 +455,7 @@ function updateModel_ybot(poseList){
     // Hip to Neck
     // ==========================================================
     // Hips
-    vec1 = new THREE.Vector3(1,0,0);
+    vec1 = new THREE.Vector3(1, 0, 0);
     vec2 = getSubVector(poseList[23], poseList[24]);
     vec1.y *= -1;
     vec2.y *= -1;
@@ -480,9 +470,9 @@ function updateModel_ybot(poseList){
     rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
 
     // neck
-    var midShoulder = new THREE.Vector3(0.5*(poseList[11].x + poseList[12].x), 0.5*(poseList[11].y + poseList[12].y), 0.5*(poseList[11].z + poseList[12].z));
-    var midHip = new THREE.Vector3(0.5*(poseList[23].x + poseList[24].x), 0.5*(poseList[23].y + poseList[24].y), 0.5*(poseList[23].z + poseList[24].z));
-    var midMouse = new THREE.Vector3(0.5*(poseList[9].x + poseList[10].x), 0.5*(poseList[9].y + poseList[10].y), 0.5*(poseList[9].z + poseList[10].z));
+    var midShoulder = new THREE.Vector3(0.5 * (poseList[11].x + poseList[12].x), 0.5 * (poseList[11].y + poseList[12].y), 0.5 * (poseList[11].z + poseList[12].z));
+    var midHip = new THREE.Vector3(0.5 * (poseList[23].x + poseList[24].x), 0.5 * (poseList[23].y + poseList[24].y), 0.5 * (poseList[23].z + poseList[24].z));
+    var midMouse = new THREE.Vector3(0.5 * (poseList[9].x + poseList[10].x), 0.5 * (poseList[9].y + poseList[10].y), 0.5 * (poseList[9].z + poseList[10].z));
     var temp = getSubVector(midShoulder, midHip)
     vec1 = getSubVector(midMouse, temp);
     vec2 = getSubVector(poseList[0], midMouse);
@@ -533,127 +523,6 @@ function updateModel_ybot(poseList){
     rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
 }
 
-function updateModel_girl(poseList){
-    var i = 0;
-
-    var vec1, vec2;
-
-    // ==========================================================
-    // Arms
-    // ==========================================================
-    // left sholder
-    vec1 = getSubVector(poseList[11], poseList[12]);
-    vec2 = getSubVector(poseList[13], poseList[11]);
-    // vec1.y *= -1;
-    // vec2.y *= -1;
-    rotateJoint2(vec1, [1, 0, 0], vec2, bones, jointAddress[i++],[-0.23, -0.008,0.034] );
-
-    // left arm
-    vec1 = getSubVector(poseList[13], poseList[11]);
-    vec2 = getSubVector(poseList[15], poseList[13]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    rotateJoint2(vec1, [0, 1, 0], vec2, bones, jointAddress[i++],[-0.025, -0.0005727660572474075 ,0.023]);
-
-    // // left hand
-    vec1 = getSubVector(poseList[15], poseList[13]);
-    vec2 = getSubVector(poseList[19], poseList[15]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    rotateJoint2(vec1, [0, 1, 0], vec2, bones, jointAddress[i++], [-0.024,0.048,-0.045]);
-
-    // right sholder
-    vec1 = getSubVector(poseList[12], poseList[11]);
-    vec2 = getSubVector(poseList[14], poseList[12]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    rotateJoint2(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++], [-0.23,0.0055,-0.023]);
-
-    // // right arm
-    vec1 = getSubVector(poseList[14], poseList[12]);
-    vec2 = getSubVector(poseList[16], poseList[14]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    rotateJoint2(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++],[-0.025,0.0007434126872042269,-0.03]);
-
-    // // right hand
-    vec1 = getSubVector(poseList[16], poseList[14]);
-    vec2 = getSubVector(poseList[20], poseList[16]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    rotateJoint2(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++],[-0.025,-0.046,0.051]);
-
-    // ==========================================================
-    // Hip to Neck
-    // ==========================================================
-    // Hips
-    vec1 = new THREE.Vector3(1,0,0);
-    vec2 = getSubVector(poseList[23], poseList[24]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
-
-
-    // 허리-어깨
-    vec1 = getSubVector(poseList[11], poseList[12]);
-    vec2 = getSubVector(poseList[23], poseList[24]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
-
-    // neck
-    var midShoulder = new THREE.Vector3(0.5*(poseList[11].x + poseList[12].x), 0.5*(poseList[11].y + poseList[12].y), 0.5*(poseList[11].z + poseList[12].z));
-    var midHip = new THREE.Vector3(0.5*(poseList[23].x + poseList[24].x), 0.5*(poseList[23].y + poseList[24].y), 0.5*(poseList[23].z + poseList[24].z));
-    var midMouse = new THREE.Vector3(0.5*(poseList[9].x + poseList[10].x), 0.5*(poseList[9].y + poseList[10].y), 0.5*(poseList[9].z + poseList[10].z));
-    var temp = getSubVector(midShoulder, midHip)
-    vec1 = getSubVector(midMouse, temp);
-    vec2 = getSubVector(poseList[0], midMouse);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    rotateJoint(vec1, [0, 1, 0], vec2, bones, jointAddress[i++]);
-
-
-    // ==========================================================
-    // Left Leg
-    // ==========================================================
-    // 허벅지
-    vec1 = getSubVector(midHip, midShoulder);
-    // vec1 = getSubVector(poseList[23], poseList[11]);
-    vec2 = getSubVector(poseList[25], poseList[23]);
-    vec1.z *= -1;
-    vec2.z *= -1;
-    rotateJoint2(vec1, [0, -1, 0], vec2, bones, jointAddress[i++], [-0.018,0,-3.1]);
-
-    // 종아리
-    vec1 = getSubVector(poseList[25], poseList[23]);
-    vec2 = getSubVector(poseList[27], poseList[25]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    vec1.z *= -1;
-    vec2.z *= -1;
-    rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
-
-
-
-    // ==========================================================
-    // Right Leg
-    // ==========================================================
-    // 허벅지
-    vec1 = getSubVector(midHip, midShoulder);
-    vec2 = getSubVector(poseList[26], poseList[24]);
-    vec1.z *= -1;
-    vec2.z *= -1;
-    rotateJoint2(vec1, [0, -1, 0], vec2, bones, jointAddress[i++],[-0.036,0,3.1]);
-
-    // // 종아리
-    vec1 = getSubVector(poseList[26], poseList[24]);
-    vec2 = getSubVector(poseList[28], poseList[26]);
-    vec1.y *= -1;
-    vec2.y *= -1;
-    vec1.z *= -1;
-    vec2.z *= -1;
-    rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
-}
 
 function getSubVector(p1, p2) {
     return new THREE.Vector3(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z)
@@ -1092,21 +961,20 @@ function rendBG_sheep() {
 function rendBG_planet2() {
     scene.background = new THREE.Color(0x000000);
     const loader = new THREE.TextureLoader();
-    loader.load('../src/manyworlds-hyperwall-small.jpg' , function(texture)
-                {
-                 scene.background = texture;  
-                });
+    loader.load('../src/manyworlds-hyperwall-small.jpg', function (texture) {
+        scene.background = texture;
+    });
 
     // change light property
-    lights[0] = new THREE.DirectionalLight( 0xffffff, 1 );
-    lights[0].position.set( 10, 0, 0 );
+    lights[0] = new THREE.DirectionalLight(0xffffff, 1);
+    lights[0].position.set(10, 0, 0);
     lights[0].castShadow = true;
-    lights[1] = new THREE.DirectionalLight( 0x11E8BB, 1 );
-    lights[1].position.set( 7.5, 10, 5 );
+    lights[1] = new THREE.DirectionalLight(0x11E8BB, 1);
+    lights[1].position.set(7.5, 10, 5);
     lights[1].castShadow = true;
 
-    lights[2] = new THREE.DirectionalLight( 0x8200C9, 1 );
-    lights[2].position.set( -7.5, -10, 5 );
+    lights[2] = new THREE.DirectionalLight(0x8200C9, 1);
+    lights[2].position.set(-7.5, -10, 5);
     lights[2].castShadow = true;
 
 
@@ -1121,41 +989,41 @@ function rendBG_planet2() {
     scene.add(circle);
     scene.add(skelet);
     scene.add(particle);
-  
+
     var geometry = new THREE.TetrahedronGeometry(2, 0);
     var geom = new THREE.SphereGeometry(7, 30, 30);
     var geom2 = new THREE.IcosahedronGeometry(15, 1);
-  
+
     var material = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
+        color: 0xffffff,
     });
-  
+
     for (var i = 0; i < 1000; i++) {
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
-      mesh.position.multiplyScalar(90 + (Math.random() * 700));
-      mesh.rotation.set(Math.random() * 2, Math.random() * 2, Math.random() * 2);
-      particle.add(mesh);
+        var mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+        mesh.position.multiplyScalar(90 + (Math.random() * 700));
+        mesh.rotation.set(Math.random() * 2, Math.random() * 2, Math.random() * 2);
+        particle.add(mesh);
     }
-  
+
     var mat = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
+        color: 0xffffff,
     });
-  
+
     var mat2 = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
-      wireframe: true,
-      side: THREE.DoubleSide
-  
+        color: 0xffffff,
+        wireframe: true,
+        side: THREE.DoubleSide
+
     });
-  
+
     var planet = new THREE.Mesh(geom, mat);
     planet.scale.x = planet.scale.y = planet.scale.z = 1.6;
     planet.receiveShadow = true;
     circle.add(planet);
-    
+
     circle.translateY(-11);
-  
+
     // var planet2 = new THREE.Mesh(geom2, mat2);
     // planet2.scale.x = planet2.scale.y = planet2.scale.z = 2.3;
     //skelet.add(planet2);
@@ -1175,13 +1043,13 @@ function rendBG_planet2() {
 //             }
 //     });
 //     material.defaultAttributeValues.uv = [1.0, 1.0];
-  
+
 //     const mesh = new THREE.Mesh(geo, material);
 //     // const mesh = new THREE.Mesh(geo, new THREE.MeshNormalMaterial());
 //     mesh.position.set(-100, 0, 0);
 //     mesh.rotation.set(0, Math.PI / 2, 0);
 //     mesh.scale.set(1, 1, -1);
-    
+
 //     scene.add(mesh);
 
 //     const igeo = new THREE.IcosahedronGeometry(40, 3);
@@ -1206,63 +1074,65 @@ function rendBG_planet2() {
 // }
 
 function rendBG_moon() {
-    var textureURL = "../src/lroc_color_poles_1k.jpg"; 
-    var displacementURL = "../src/ldem_3_8bit.jpg"; 
+    var textureURL = "../src/lroc_color_poles_1k.jpg";
+    var displacementURL = "../src/ldem_3_8bit.jpg";
     var worldURL = "../src/hipp8_s.jpg"
 
 
-    var geometry = new THREE.SphereGeometry( 20,60,60 );
+    var geometry = new THREE.SphereGeometry(20, 60, 60);
 
     var textureLoader = new THREE.TextureLoader();
-    var texture = textureLoader.load( textureURL );
-    var displacementMap = textureLoader.load( displacementURL );
-    var worldTexture = textureLoader.load( worldURL );
-    
-    var material = new THREE.MeshPhongMaterial ( 
-      { color: 0xffffff ,
-      map: texture ,
-         displacementMap: displacementMap,
-      displacementScale: 0.06,
-      bumpMap: displacementMap,
-      bumpScale: 0.04,
-       reflectivity:0, 
-       shininess :0
-      } 
-    
+    var texture = textureLoader.load(textureURL);
+    var displacementMap = textureLoader.load(displacementURL);
+    var worldTexture = textureLoader.load(worldURL);
+
+    var material = new THREE.MeshPhongMaterial(
+        {
+            color: 0xffffff,
+            map: texture,
+            displacementMap: displacementMap,
+            displacementScale: 0.06,
+            bumpMap: displacementMap,
+            bumpScale: 0.04,
+            reflectivity: 0,
+            shininess: 0
+        }
+
     );
-    
-    moon = new THREE.Mesh( geometry, material );
-    
-    
+
+    moon = new THREE.Mesh(geometry, material);
+
+
     const light = new THREE.DirectionalLight(0xFFFFFF, 1);
     light.position.set(100, 20, 50);
     light.castShadow = true;
     scene.add(light);
-    
-    
-    const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.1 );
-    hemiLight.color.setHSL( 0.6, 1, 0.6 );
-    hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-    hemiLight.position.set( 0, 0, 0 );
-    scene.add( hemiLight );
-    
-    
-    var worldGeometry = new THREE.SphereGeometry( 100,60,60 );
-    var worldMaterial = new THREE.MeshBasicMaterial ( 
-      { color: 0xffffff ,
-      map: worldTexture ,
-      side: THREE.BackSide
-      } 
+
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.1);
+    hemiLight.color.setHSL(0.6, 1, 0.6);
+    hemiLight.groundColor.setHSL(0.095, 1, 0.75);
+    hemiLight.position.set(0, 0, 0);
+    scene.add(hemiLight);
+
+
+    var worldGeometry = new THREE.SphereGeometry(100, 60, 60);
+    var worldMaterial = new THREE.MeshBasicMaterial(
+        {
+            color: 0xffffff,
+            map: worldTexture,
+            side: THREE.BackSide
+        }
     );
-    world = new THREE.Mesh( worldGeometry, worldMaterial );
-    scene.add( world );
-    
+    world = new THREE.Mesh(worldGeometry, worldMaterial);
+    scene.add(world);
+
     moon.translateY(-20);
     moon.receiveShadow = true;
-    scene.add( moon );
-    
-    moon.rotation.x = 3.1415*0.02;
-    moon.rotation.y = 3.1415*1.54;
+    scene.add(moon);
+
+    moon.rotation.x = 3.1415 * 0.02;
+    moon.rotation.y = 3.1415 * 1.54;
 }
 
 
@@ -1270,11 +1140,11 @@ function rendBG_moon() {
 
 
 // 초기 세팅 값 -----------------------------------------------------------------
-document.getElementById("Background1").onclick = function(){render(); };
-document.getElementById("Background2").onclick = function(){ render(); };
-document.getElementById("Background3").onclick = function(){render(); };
+document.getElementById("Background1").onclick = function () { render(); };
+document.getElementById("Background2").onclick = function () { render(); };
+document.getElementById("Background3").onclick = function () { render(); };
 document.getElementById("Model1").onclick = function () {
- 
+
     jointAddress = [17, 19, 21, 60, 62, 64, 0, 4, 8, 110, 112, 101, 103];
     modelAddress = '/models/SambaDancing.fbx';
     scene.remove(fbxModel)
@@ -1283,15 +1153,15 @@ document.getElementById("Model1").onclick = function () {
 };
 document.getElementById("Model2").onclick = function () {
 
-    jointAddress = [8, 9, 10, 23, 33, 34, 0, 2, 4, 60, 61, 55, 56];
-    modelAddress = '/models/girl.fbx';
+    jointAddress = [26, 28, 30, 53, 55, 57, 0, 3, 13, 78, 81, 93, 96];
+    modelAddress = '/models/remy.fbx';
     scene.remove(fbxModel)
     loadModel();
     // render();
 };
 document.getElementById("Model3").onclick = function () {
-    jointAddress = [17, 19, 21, 60, 62, 64, 0, 4, 8, 110, 112, 101, 103];
-    modelAddress = '/models/SambaDancing.fbx';
+    jointAddress = [5, 6, 7, 29, 30, 31, 0, 2, 52, 60, 61, 55, 56];
+    modelAddress = '/models/woman.fbx';
     scene.remove(fbxModel)
     loadModel();
     render();
