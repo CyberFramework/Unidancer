@@ -202,6 +202,7 @@ import { OrbitControls } from '../../examples/jsm/controls/OrbitControls.js';
 import { FBXLoader } from '/examples/jsm/loaders/FBXLoader.js'
 
 let gui, scene, camera, renderer, orbit, lights, mesh, bones, skeletonHelper, fbxModel;
+let modelAddress, jointAddress;
 var circle, particle, skelet;
 var currentBG = 0;
 var moon, world;
@@ -313,7 +314,6 @@ function setupDatGui(object) {
 
 
 function render() {
-
     requestAnimationFrame(render);
 
     const time = Date.now() * 0.001;
@@ -346,6 +346,7 @@ function render() {
 
     }
 
+    
     renderer.clear();
     renderer.render(scene, camera);
 
@@ -353,8 +354,8 @@ function render() {
 
 function loadModel() {
     const loader = new FBXLoader();
-    loader.load('/models/SambaDancing.fbx', function (object) {
-
+    loader.load(modelAddress, function (object) {
+        fbxModel = object;
         // mixer = new THREE.AnimationMixer( object );
 
         // const action = mixer.clipAction( object.animations[ 0 ] );
@@ -374,12 +375,13 @@ function loadModel() {
         object.rotation.y = 45;
         object.castShadow = true;
         scene.add(object);
+        
 
 
-        const helper = new THREE.SkeletonHelper(object);
-        scene.add(helper);
+        // const helper = new THREE.SkeletonHelper(object);
+        // scene.add(helper);
 
-        setupDatGui(object);
+        // setupDatGui(object);
     });
 
 
@@ -400,7 +402,17 @@ function getBoneList(object) {
 }
 
 function updateModel(poseList) {
+    if(modelAddress == '/models/SambaDancing.fbx'){
+        updateModel_ybot(poseList)
+    }
+    else if (modelAddress == '/models/girl.fbx'){
+        updateModel_girl(poseList)
+    }
+}
 
+
+function updateModel_ybot(poseList){
+    var i = 0;
 
     var vec1, vec2;
 
@@ -412,42 +424,42 @@ function updateModel(poseList) {
     vec2 = getSubVector(poseList[13], poseList[11]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 17);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
 
     // left arm
     vec1 = getSubVector(poseList[13], poseList[11]);
     vec2 = getSubVector(poseList[15], poseList[13]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 19);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
 
     // // left hand
     vec1 = getSubVector(poseList[15], poseList[13]);
     vec2 = getSubVector(poseList[19], poseList[15]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 21);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
 
     // right sholder
     vec1 = getSubVector(poseList[12], poseList[11]);
     vec2 = getSubVector(poseList[14], poseList[12]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [-1, 0, 0], vec2, bones, 60);
+    rotateJoint(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++]);
 
     // // right arm
     vec1 = getSubVector(poseList[14], poseList[12]);
     vec2 = getSubVector(poseList[16], poseList[14]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [-1, 0, 0], vec2, bones, 62);
+    rotateJoint(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++]);
 
     // // right hand
     vec1 = getSubVector(poseList[16], poseList[14]);
     vec2 = getSubVector(poseList[20], poseList[16]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [-1, 0, 0], vec2, bones, 64);
+    rotateJoint(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++]);
 
     // ==========================================================
     // Hip to Neck
@@ -457,7 +469,7 @@ function updateModel(poseList) {
     vec2 = getSubVector(poseList[23], poseList[24]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 0);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
 
 
     // 허리-어깨
@@ -465,7 +477,7 @@ function updateModel(poseList) {
     vec2 = getSubVector(poseList[23], poseList[24]);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [1, 0, 0], vec2, bones, 4);
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
 
     // neck
     var midShoulder = new THREE.Vector3(0.5*(poseList[11].x + poseList[12].x), 0.5*(poseList[11].y + poseList[12].y), 0.5*(poseList[11].z + poseList[12].z));
@@ -476,7 +488,7 @@ function updateModel(poseList) {
     vec2 = getSubVector(poseList[0], midMouse);
     vec1.y *= -1;
     vec2.y *= -1;
-    rotateJoint(vec1, [0, 1, 0], vec2, bones, 8);
+    rotateJoint(vec1, [0, 1, 0], vec2, bones, jointAddress[i++]);
 
 
     // ==========================================================
@@ -488,7 +500,7 @@ function updateModel(poseList) {
     vec2 = getSubVector(poseList[25], poseList[23]);
     vec1.z *= -1;
     vec2.z *= -1;
-    rotateJoint(vec1, [0, -1, 0], vec2, bones, 110);
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
 
     // 종아리
     vec1 = getSubVector(poseList[25], poseList[23]);
@@ -497,7 +509,7 @@ function updateModel(poseList) {
     vec2.y *= -1;
     vec1.z *= -1;
     vec2.z *= -1;
-    rotateJoint(vec1, [0, -1, 0], vec2, bones, 112);
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
 
 
 
@@ -509,7 +521,7 @@ function updateModel(poseList) {
     vec2 = getSubVector(poseList[26], poseList[24]);
     vec1.z *= -1;
     vec2.z *= -1;
-    rotateJoint(vec1, [0, -1, 0], vec2, bones, 101);
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
 
     // // 종아리
     vec1 = getSubVector(poseList[26], poseList[24]);
@@ -518,8 +530,129 @@ function updateModel(poseList) {
     vec2.y *= -1;
     vec1.z *= -1;
     vec2.z *= -1;
-    rotateJoint(vec1, [0, -1, 0], vec2, bones, 103);
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
+}
 
+function updateModel_girl(poseList){
+    var i = 0;
+
+    var vec1, vec2;
+
+    // ==========================================================
+    // Arms
+    // ==========================================================
+    // left sholder
+    vec1 = getSubVector(poseList[11], poseList[12]);
+    vec2 = getSubVector(poseList[13], poseList[11]);
+    // vec1.y *= -1;
+    // vec2.y *= -1;
+    rotateJoint2(vec1, [1, 0, 0], vec2, bones, jointAddress[i++],[-0.23, -0.008,0.034] );
+
+    // left arm
+    vec1 = getSubVector(poseList[13], poseList[11]);
+    vec2 = getSubVector(poseList[15], poseList[13]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint2(vec1, [0, 1, 0], vec2, bones, jointAddress[i++],[-0.025, -0.0005727660572474075 ,0.023]);
+
+    // // left hand
+    vec1 = getSubVector(poseList[15], poseList[13]);
+    vec2 = getSubVector(poseList[19], poseList[15]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint2(vec1, [0, 1, 0], vec2, bones, jointAddress[i++], [-0.024,0.048,-0.045]);
+
+    // right sholder
+    vec1 = getSubVector(poseList[12], poseList[11]);
+    vec2 = getSubVector(poseList[14], poseList[12]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint2(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++], [-0.23,0.0055,-0.023]);
+
+    // // right arm
+    vec1 = getSubVector(poseList[14], poseList[12]);
+    vec2 = getSubVector(poseList[16], poseList[14]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint2(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++],[-0.025,0.0007434126872042269,-0.03]);
+
+    // // right hand
+    vec1 = getSubVector(poseList[16], poseList[14]);
+    vec2 = getSubVector(poseList[20], poseList[16]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint2(vec1, [-1, 0, 0], vec2, bones, jointAddress[i++],[-0.025,-0.046,0.051]);
+
+    // ==========================================================
+    // Hip to Neck
+    // ==========================================================
+    // Hips
+    vec1 = new THREE.Vector3(1,0,0);
+    vec2 = getSubVector(poseList[23], poseList[24]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
+
+
+    // 허리-어깨
+    vec1 = getSubVector(poseList[11], poseList[12]);
+    vec2 = getSubVector(poseList[23], poseList[24]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [1, 0, 0], vec2, bones, jointAddress[i++]);
+
+    // neck
+    var midShoulder = new THREE.Vector3(0.5*(poseList[11].x + poseList[12].x), 0.5*(poseList[11].y + poseList[12].y), 0.5*(poseList[11].z + poseList[12].z));
+    var midHip = new THREE.Vector3(0.5*(poseList[23].x + poseList[24].x), 0.5*(poseList[23].y + poseList[24].y), 0.5*(poseList[23].z + poseList[24].z));
+    var midMouse = new THREE.Vector3(0.5*(poseList[9].x + poseList[10].x), 0.5*(poseList[9].y + poseList[10].y), 0.5*(poseList[9].z + poseList[10].z));
+    var temp = getSubVector(midShoulder, midHip)
+    vec1 = getSubVector(midMouse, temp);
+    vec2 = getSubVector(poseList[0], midMouse);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    rotateJoint(vec1, [0, 1, 0], vec2, bones, jointAddress[i++]);
+
+
+    // ==========================================================
+    // Left Leg
+    // ==========================================================
+    // 허벅지
+    vec1 = getSubVector(midHip, midShoulder);
+    // vec1 = getSubVector(poseList[23], poseList[11]);
+    vec2 = getSubVector(poseList[25], poseList[23]);
+    vec1.z *= -1;
+    vec2.z *= -1;
+    rotateJoint2(vec1, [0, -1, 0], vec2, bones, jointAddress[i++], [-0.018,0,-3.1]);
+
+    // 종아리
+    vec1 = getSubVector(poseList[25], poseList[23]);
+    vec2 = getSubVector(poseList[27], poseList[25]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    vec1.z *= -1;
+    vec2.z *= -1;
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
+
+
+
+    // ==========================================================
+    // Right Leg
+    // ==========================================================
+    // 허벅지
+    vec1 = getSubVector(midHip, midShoulder);
+    vec2 = getSubVector(poseList[26], poseList[24]);
+    vec1.z *= -1;
+    vec2.z *= -1;
+    rotateJoint2(vec1, [0, -1, 0], vec2, bones, jointAddress[i++],[-0.036,0,3.1]);
+
+    // // 종아리
+    vec1 = getSubVector(poseList[26], poseList[24]);
+    vec2 = getSubVector(poseList[28], poseList[26]);
+    vec1.y *= -1;
+    vec2.y *= -1;
+    vec1.z *= -1;
+    vec2.z *= -1;
+    rotateJoint(vec1, [0, -1, 0], vec2, bones, jointAddress[i++]);
 }
 
 function getSubVector(p1, p2) {
@@ -556,6 +689,20 @@ function rotateJoint(v1, tov1, v2, bones, idx) {
     bones[idx].rotation.z = rotation[2];
 }
 
+function rotateJoint2(v1, tov1, v2, bones, idx, basicr) {
+    // 내가 여기서 v2만 변환해주면 되는 거잔아
+    //
+    var xVec = new THREE.Vector3(...tov1);
+    var ro = getAngleXYZ(v1, xVec);
+    var vec2 = rotateVector(v2, ro[0], ro[1], ro[2]);
+
+    var rotation = getAngleXYZ(xVec, vec2);
+
+    bones[idx].rotation.x = rotation[0] + basicr[0];
+    bones[idx].rotation.y = rotation[1] + basicr[1];
+    bones[idx].rotation.z = rotation[2] + basicr[2];
+}
+
 
 function rotateVector(vec, rx, ry, rz) {
     var temp1 = rotateXY(vec.x, vec.y, rz);
@@ -573,12 +720,6 @@ function rotateXY(x, y, r) {
     var ny = x * sinR + y * cosR;
     return [nx, ny];
 }
-
-
-initScene();
-loadModel();
-render();
-
 
 
 //------------------------------- Background Parts -----------------------------------
@@ -1123,3 +1264,43 @@ function rendBG_moon() {
     moon.rotation.x = 3.1415*0.02;
     moon.rotation.y = 3.1415*1.54;
 }
+
+
+
+
+
+// 초기 세팅 값 -----------------------------------------------------------------
+document.getElementById("Background1").onclick = function(){render(); };
+document.getElementById("Background2").onclick = function(){ render(); };
+document.getElementById("Background3").onclick = function(){render(); };
+document.getElementById("Model1").onclick = function () {
+ 
+    jointAddress = [17, 19, 21, 60, 62, 64, 0, 4, 8, 110, 112, 101, 103];
+    modelAddress = '/models/SambaDancing.fbx';
+    scene.remove(fbxModel)
+    loadModel();
+    // render();
+};
+document.getElementById("Model2").onclick = function () {
+
+    jointAddress = [8, 9, 10, 23, 33, 34, 0, 2, 4, 60, 61, 55, 56];
+    modelAddress = '/models/girl.fbx';
+    scene.remove(fbxModel)
+    loadModel();
+    // render();
+};
+document.getElementById("Model3").onclick = function () {
+    jointAddress = [17, 19, 21, 60, 62, 64, 0, 4, 8, 110, 112, 101, 103];
+    modelAddress = '/models/SambaDancing.fbx';
+    scene.remove(fbxModel)
+    loadModel();
+    render();
+};
+
+
+jointAddress = [17, 19, 21, 60, 62, 64, 0, 4, 8, 110, 112, 101, 103];
+modelAddress = '/models/SambaDancing.fbx';
+
+initScene();
+loadModel();
+render();
