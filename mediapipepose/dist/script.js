@@ -246,23 +246,6 @@ function initScene() {
     //     renderer.setSize(window.innerWidth, window.innerHeight);
 
     // }, false);
-
-
-    // 임시 background 교체
-    currentBG = 2;
-    switch (currentBG) {
-        case 0:
-            rendBG_sheep();
-            break;
-        case 1:
-            rendBG_planet2();
-            break;
-        case 2:
-            rendBG_moon();
-            break;
-        default:
-    }
-
 }
 
 function setupDatGui(object) {
@@ -1140,37 +1123,62 @@ function rendBG_moon() {
 
 
 // 초기 세팅 값 -----------------------------------------------------------------
-document.getElementById("Background1").onclick = function () { render(); };
-document.getElementById("Background2").onclick = function () { render(); };
-document.getElementById("Background3").onclick = function () { render(); };
-document.getElementById("Model1").onclick = function () {
-
-    jointAddress = [17, 19, 21, 60, 62, 64, 0, 4, 8, 110, 112, 101, 103];
-    modelAddress = '/models/SambaDancing.fbx';
-    scene.remove(fbxModel)
-    loadModel();
-    // render();
-};
-document.getElementById("Model2").onclick = function () {
-
-    jointAddress = [26, 28, 30, 53, 55, 57, 0, 3, 13, 78, 81, 93, 96];
-    modelAddress = '/models/remy.fbx';
-    scene.remove(fbxModel)
-    loadModel();
-    // render();
-};
-document.getElementById("Model3").onclick = function () {
-    jointAddress = [5, 6, 7, 29, 30, 31, 0, 2, 52, 60, 61, 55, 56];
-    modelAddress = '/models/woman.fbx';
-    scene.remove(fbxModel)
-    loadModel();
-    render();
-};
-
-
 jointAddress = [17, 19, 21, 60, 62, 64, 0, 4, 8, 110, 112, 101, 103];
 modelAddress = '/models/SambaDancing.fbx';
-
 initScene();
+rendBG_sheep();
 loadModel();
 render();
+
+//버튼 클릭시 변수 교체
+document.getElementById("sheep").onclick = function(){
+    currentBG = 0;
+    switch_BG_model(currentBG, modelAddress);
+};
+document.getElementById("planet").onclick = function(){
+    currentBG = 1;
+    switch_BG_model(currentBG, modelAddress);
+};
+document.getElementById("moon").onclick = function(){
+    currentBG = 2;
+    switch_BG_model(currentBG, modelAddress);
+};
+document.getElementById("robot").onclick = function(){
+    jointAddress = [17, 19, 21, 60, 62, 64, 0, 4, 8, 110, 112, 101, 103];
+    modelAddress = '/models/SambaDancing.fbx';
+    switch_BG_model(currentBG, modelAddress);
+};
+document.getElementById("gangster").onclick = function(){
+    jointAddress = [26, 28, 30, 53, 55, 57, 0, 3, 13, 78, 81, 93, 96];
+    modelAddress = '/models/remy.fbx';
+    switch_BG_model(currentBG, modelAddress);
+};
+document.getElementById("woman").onclick = function(){
+    jointAddress = [5, 6, 7, 29, 30, 31, 0, 2, 52, 60, 61, 55, 56];
+    modelAddress = '/models/woman.fbx';
+    switch_BG_model(currentBG, modelAddress);
+};
+
+// 배경 및 모델 교체 함수
+function switch_BG_model(currentBG, modelAddress){
+    switch (currentBG) {
+        case 0:
+            scene.clear();
+            rendBG_sheep();
+            loadModel();
+            render();
+            break;
+        case 1:
+            scene.clear();
+            rendBG_planet2();
+            loadModel();
+            render();
+            break;
+        case 2:
+            scene.clear();
+            rendBG_moon();
+            loadModel();
+            render();
+            break;
+    }
+}
