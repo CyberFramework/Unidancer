@@ -179,27 +179,10 @@ new controls.ControlPanel(controlsElement, {
 // 모델링하는 부분 이제 시작
 // =====================================================
 
-// import {
-//     Bone,
-//     Color,
-//     CylinderGeometry,
-//     DoubleSide,
-//     Float32BufferAttribute,
-//     MeshPhongMaterial,
-//     PerspectiveCamera,
-//     PointLight,
-//     Scene,
-//     SkinnedMesh,
-//     Skeleton,
-//     SkeletonHelper,
-//     Vector3,
-//     Uint16BufferAttribute,
-//     WebGLRenderer
-// } from "../../build/three.module.js";
-import * as THREE from '../../build/three.module.js';
-import { GUI } from '../../examples/jsm/libs/dat.gui.module.js';
-import { OrbitControls } from '../../examples/jsm/controls/OrbitControls.js';
-import { FBXLoader } from '/examples/jsm/loaders/FBXLoader.js'
+import * as THREE from '/build/three.module.js';
+import { GUI } from '/build/dat.gui.module.js';
+import { OrbitControls } from '/build/OrbitControls.js';
+import { FBXLoader } from '/build/FBXLoader.js'
 
 let gui, scene, camera, renderer, orbit, lights, mesh, bones, skeletonHelper, fbxModel;
 let modelAddress, jointAddress;
@@ -597,51 +580,6 @@ function rendBG_sheep() {
     // for convenience
     var pi = Math.PI;
 
-    // var h = window.innerHeight,
-    // w = window.innerWidth;
-
-
-    // const dpi = window.devicePixelRatio;
-    // renderer.setSize(w * dpi, h * dpi);
-
-    // renderer.shadowMapEnabled = true;
-    // renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    // document.body.appendChild(renderer.domElement);
-
-    //camera
-    // camera.position.set(25, 5, 0);
-    // camera.lookAt(new THREE.Vector3(0, 4, 0));
-
-    //lights, 3 point lighting
-    // var col_light = 0xffffff; // set
-
-    // var light = new THREE.AmbientLight(col_light, 0.6);
-
-    // var keyLight = new THREE.DirectionalLight(col_light, 0.6);
-    // keyLight.position.set(20, 30, 10);
-    // keyLight.castShadow = true;
-    // keyLight.shadow.camera.top = 20;
-
-    // var shadowHelper = new THREE.CameraHelper( keyLight.shadow.camera );
-    // scene.add( shadowHelper );
-
-    // var fillLight = new THREE.DirectionalLight(col_light, 0.3);
-    // fillLight.position.set(-20, 20, 20);
-
-    // var backLight = new THREE.DirectionalLight(col_light, 0.1);
-    // backLight.position.set(10, 0, -20);
-
-    // Add lights
-    // scene.add(light);
-    // scene.add(keyLight);
-    // scene.add(fillLight);
-    // scene.add(backLight);
-
-    // axis
-    // var axesHelper = new THREE.AxesHelper(50);
-    // scene.add(axesHelper);
-
-    //materials
     var mat_orange = new THREE.MeshPhongMaterial({ color: 0xff8c75 });
     var mat_grey = new THREE.MeshLambertMaterial({ color: 0xf3f2f7 });
     var mat_yellow = new THREE.MeshLambertMaterial({ color: 0xfeb42b });
@@ -1013,48 +951,6 @@ function rendBG_planet2() {
 
 
 }
-
-
-// function rendBG_desert() {
-//     lights[0] = new THREE.HemisphereLight(0xFFFFFF, 0x444444, 1);
-
-//     const geo = new THREE.PlaneBufferGeometry(10000, 10000);
-//     const material = new THREE.ShaderMaterial({
-//         uniforms: {
-//             resolution: {
-//               value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-//             }
-//     });
-//     material.defaultAttributeValues.uv = [1.0, 1.0];
-
-//     const mesh = new THREE.Mesh(geo, material);
-//     // const mesh = new THREE.Mesh(geo, new THREE.MeshNormalMaterial());
-//     mesh.position.set(-100, 0, 0);
-//     mesh.rotation.set(0, Math.PI / 2, 0);
-//     mesh.scale.set(1, 1, -1);
-
-//     scene.add(mesh);
-
-//     const igeo = new THREE.IcosahedronGeometry(40, 3);
-//     // const normalMat = new THREE.MeshPhongMaterial({color: 0xFF00FF, shading: THREE.FlatShading});
-//     const normalMat = new THREE.MeshPhongMaterial({ color: 0xc1994a, shading: THREE.FlatShading });
-//     ground = new THREE.Mesh(igeo, normalMat);
-//     igeo.verticesNeedUpdate = true;
-//     console.log(igeo.attributes.position.array);
-//     igeo.attributes.position.array.forEach(vert => {
-//         let randomTranslate = Math.floor(Math.random() * 10) + 1;
-//         let plusMinus = Math.floor(Math.random() * 2) == 1 ? 1 : -1;
-//         randomTranslate *= plusMinus;
-//         if (vert % 2 == 1)
-//             vert += randomTranslate;
-//     });
-//     igeo.verticesNeedUpdate = true;
-
-//     ground.position.set(0, -65, 0);
-//     ground.scale.set(1, 1, 8);
-
-//     scene.add(ground);
-// }
 
 function rendBG_moon() {
     var textureURL = "../src/lroc_color_poles_1k.jpg";
